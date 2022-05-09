@@ -1,6 +1,6 @@
 /**
 过期京豆兑换为喜豆
-cron 33 9 * * * jd_exchangejxbeans.js
+cron 33 21,23 * * * jd_exchangejxbeans.js
 TG频道：https://t.me/sheeplost
 */
 const $ = new Env('0xzw京豆兑喜豆');
@@ -10,7 +10,7 @@ const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
 //IOS等用户直接用NobyDa的jd cookie
 let cookiesArr = [], cookie = '', message = '';
 let exjxbeans = false;
-let ExBeanDays =3;
+let ExBeanDays =3;//最大7天
 if (process.env.exjxbeans) {
     exjxbeans = process.env.exjxbeans;
 }
@@ -65,12 +65,12 @@ async function domain() {
     maxexchange = 1000;
     beans = await queryexpirebeans();
     if (beans.ret === 0) {
-
+       if(ExBeanDays>7)ExBeanDays=7;
         for(let t=0;t<ExBeanDays;t++)
         {
             if(beans.expirejingdou[t].expireamount)
             strGuoqi+=`【${timeFormat(beans.expirejingdou[t].time * 1000)}】过期${beans.expirejingdou[0].expireamount}豆\n`;
-            decExBean+=beans.expirejingdou[t].expireamount;
+            expirebeans+=beans.expirejingdou[t].expireamount;
         }
  //       beans.expirejingdou.map(item => {
  //           expirebeans += item.expireamount;
@@ -80,7 +80,7 @@ async function domain() {
         if (expirebeans) {
             //为防止异常故障，每次最多兑换1000喜豆！
             if (expirebeans < maxexchange) {
-                console.log(`您有${expirebeans}个京豆将在7天内过期,去执行兑换`);
+                console.log(`您有${expirebeans}个京豆将在${ExBeanDays}天内过期,去执行兑换`);
                 let jxbeans = await exchangejxbeans(expirebeans);
                 if (jxbeans) {
                     console.log(`成功兑换喜豆${expirebeans}！`);
@@ -90,7 +90,7 @@ async function domain() {
                 console.log(`默认每次最多兑换${maxexchange}豆子`)
             }
         } else {
-            console.log('您未来7天内无过期京豆')
+            console.log('您未来${ExBeanDays}天内无过期京豆')
         }
     } else {
         console.log('脚本默认不兑换豆子，如需兑换请设置环境变量exjxbeans为true')
