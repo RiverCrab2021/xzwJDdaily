@@ -87,10 +87,10 @@ async function domain() {
                     message += `\n【京东账号${$.index}】${$.nickName || $.UserName}\n成功兑换喜豆${expirebeans}！`
                 }
             } else {
-                console.log(`默认每次最多兑换${maxexchange}豆子`)
+                console.log(`默认每次最多兑换${$.maxexchange}豆子`)
             }
         } else {
-            console.log('您未来${ExBeanDays}天内无过期京豆')
+            console.log('您未来${$.ExBeanDays}天内无过期京豆')
         }
     } else {
         console.log('脚本默认不兑换豆子，如需兑换请设置环境变量exjxbeans为true')
